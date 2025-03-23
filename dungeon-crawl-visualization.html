@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Windows CLI Dungeon Crawl - Adventure Map</title>
+  <style>
+    :root {
+      --terminal-green: #00ff00;
+      --terminal-black: #000000;
+      --terminal-dark: #111111;
+      --node-color: #116611;
+      --highlight-color: #44ff44;
+      --line-color: #116611;
+    }
+    
+    body {
+      font-family: 'Courier New', monospace;
+      background-color: var(--terminal-black);
+      color: var(--terminal-green);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+    
+    header {
+      width: 100%;
+      background-color: var(--terminal-dark);
+      padding: 1rem 0;
+      text-align: center;
+      box-shadow: 0 2px 10px rgba(0, 255, 0, 0.3);
+    }
+    
+    h1 {
+      margin: 0;
+      font-size: 2rem;
+      text-shadow: 0 0 10px rgba(0, 255, 0, 0.7);
+    }
+    
+    .container {
+      display: flex;
+      width: 90%;
+      margin: 2rem auto;
+      gap: 2rem;
+    }
+    
+    .map-container {
+      flex: 7;
+      position: relative;
+      border: 1px solid var(--terminal-green);
+      padding: 1rem;
+      border-radius: 5px;
+      min-height: 70vh;
+      overflow: auto;
+    }
+    
+    .info-panel {
+      flex: 3;
+      border: 1px solid var(--terminal-green);
+      padding: 1rem;
+      border-radius: 5px;
+      max-height: 70vh;
+      overflow-y: auto;
+    }
+    
+    .tree-view {
+      position: relative;
+    }
+    
+    .node {
+      position: relative;
+      margin-left: 2rem;
+      margin-bottom: 0.5rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .node:hover {
+      color: var(--highlight-color);
+    }
+    
+    .node::before {
+      content: "";
+      position: absolute;
+      left: -1rem;
+      top: 0.7rem;
+      width: 0.75rem;
+      height: 1px;
+      background-color: var(--line-color);
+    }
+    
+    .node.root::before {
+      display: none;
+    }
+    
+    .node-content {
+      position: relative;
+      display: inline-block;
+      padding: 0.25rem 0.5rem;
+      border-radius: 3px;
+    }
+    
+    .node-content:hover {
+      background-color: rgba(0, 255, 0, 0.2);
+    }
+    
+    .node.dir > .node-content::before {
+      content: "📁";
+      margin-right: 0.5rem;
+    }
+    
+    .node.file > .node-content::before {
+      content: "📄";
+      margin-right: 0.5rem;
+    }
+    
+    .node.special > .node-content::before {
+      content: "🔑";
+      margin-right: 0.5rem;
+      color: gold;
+    }
+    
+    .node.tome > .node-content::before {
+      content: "📕";
+      margin-right: 0.5rem;
+      color: crimson;
+    }
+    
+    .node.treasure > .node-content::before {
+      content: "💎";
+      margin-right: 0.5rem;
+      color: cyan;
+    }
+    
+    .node-children {
+      position: relative;
+    }
+    
+    .node-children::before {
+      content: "";
+      position: absolute;
+      left: -0.85rem;
+      top: 0;
+      bottom: 0.5rem;
+      width: 1px;
+      background-color: var(--line-color);
+    }
+    
+    .item-details {
+      margin-top: 1rem;
+      padding: 1rem;
+      border: 1px dashed var(--terminal-green);
+      border-radius: 5px;
+      background-color: rgba(0, 50, 0, 0.3);
+    }
+    
+    .item-details h3 {
+      margin-top: 0;
+      border-bottom: 1px solid var(--terminal-green);
+      padding-bottom: 0.5rem;
+    }
+    
+    .item-details p {
+      margin: 0.5rem 0;
+    }
+    
+    .command-log {
+      margin-top: 1rem;
+      font-family: monospace;
+      background-color: rgba(0, 30, 0, 0.5);
+      padding: 0.5rem;
+      border-radius: 3px;
+      border-left: 3px solid var(--terminal-green);
+    }
+    
+    .blinking {
+      animation: blink 1s infinite;
+    }
+    
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+    
+    footer {
+      margin-top: auto;
+      width: 100%;
+      text-align: center;
+      padding: 1rem 0;
+      font-size: 0.8rem;
+      background-color: var(--terminal-dark);
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+      }
+      
+      .map-container, .info-panel {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Windows CLI Dungeon Crawl - Adventure Map</h1>
+  </header>
+  
+  <div class="container">
+    <div class="map-container">
+      <div class="tree-view" id="fileSystemTree">
+        <!-- Tree will be populated by JavaScript -->
+      </div>
+    </div>
+    
+    <div class="info-panel">
+      <h2>The Quest</h2>
+      <p>Navigate through the fortress to find the treasure. Use CLI commands to explore directories, examine files, and solve puzzles.</p>
+      
+      <h3>Key Items</h3>
+      <ul>
+        <li><strong>StoneKey.key</strong> - Unlocks the LockedDoor in the Inner Keep</li>
+        <li><strong>OldRecords.tome</strong> - Contains vital clue in entry #83</li>
+        <li><strong>CursedBook.tome</strong> - Must be removed to reveal the Reading Chamber</li>
+        <li><strong>Treasure.txt</strong> - The final prize (base64 encoded)</li>
+      </ul>
+      
+      <div id="itemDetails" class="item-details">
+        <h3>Select an item on the map</h3>
+        <p>Click on any location or item to view details about it.</p>
+      </div>
+    </div>
+  </div>
+  
+  <footer>
+    Windows CLI Dungeon Crawl - A text-based adventure game simulation
+  </footer>
+
+  <script>
+    // Define our file system structure
+    const fileSystem = {
+      name: "C:",
+      type: "dir",
+      children: [
+        {
+          name: "FortressLore.txt",
+          type: "file",
+          content: "Welcome to the ancient digital fortress. Legend says a treasure of immense value is hidden within its data structures. Only the most skilled command-line warriors can find it."
+        },
+        {
+          name: "README.md",
+          type: "file",
+          content: "FORTRESS CLI EXPLORER\n\nYou must navigate the fortress using command-line commands.\nKey commands: dir, cd, type, attrib, findstr\n\nYour mission is to find the hidden treasure.txt file.\nBeware of the CursedBook.tome - it blocks the path to the Reading Chamber."
+        },
+        {
+          name: "EntranceGrounds",
+          type: "dir",
+          children: [
+            {
+              name: "Gatehouse.info",
+              type: "file",
+              content: "The Gatehouse stands tall at the entrance to the fortress. From here, paths lead to various sections of the complex."
+            },
+            {
+              name: "SidePath",
+              type: "dir",
+              children: [
+                {
+                  name: "DiscardedNote.txt",
+                  type: "file",
+                  content: "I've hidden the stone key in the Armory. The old records might contain clues about entry #83."
+                }
+              ]
+            },
+            {
+              name: "OuterWalls",
+              type: "dir",
+              children: [
+                {
+                  name: "CrumblingTower.look",
+                  type: "file",
+                  content: "The tower has seen better days. Its windows offer a view of the entire fortress layout."
+                },
+                {
+                  name: "StorageRoom",
+                  type: "dir",
+                  children: [
+                    {
+                      name: "CursedBook.tome",
+                      type: "tome",
+                      content: "A dark energy emanates from this book. It seems to be blocking access to something behind it.",
+                      attributeFlags: { readOnly: true }
+                    }
+                  ]
+                },
+                {
+                  name: "InnerKeep",
+                  type: "dir",
+                  children: [
+                    {
+                      name: "GreatHall.info",
+                      type: "file",
+                      content: "The Great Hall once hosted gatherings of the fortress's creators. Now it stands empty, waiting."
+                    },
+                    {
+                      name: "OldRecords.tome",
+                      type: "tome",
+                      content: "A collection of ancient records. Entry #83 mentions a special counter-curse: 'To remove dark magic, use attrib -elim on the cursed object'."
+                    },
+                    {
+                      name: "OpenedDoor",
+                      type: "dir",
+                      children: [
+                        {
+                          name: "ForbiddenLibrary",
+                          type: "dir",
+                          children: [
+                            {
+                              name: "Vault",
+                              type: "dir",
+                              children: [
+                                {
+                                  name: "StoneSentinel.dat",
+                                  type: "file",
+                                  content: "The stone sentinel guards the inner chambers. Only those who have proven their worth may pass."
+                                }
+                              ]
+                            },
+                            {
+                              name: "ReadingChamber",
+                              type: "dir",
+                              children: [
+                                {
+                                  name: "Treasure.txt",
+                                  type: "treasure",
+                                  content: "Q29uZ3JhdHVsYXRpb25zISBZb3UndmUgc29sdmVkIHRoZSBDbGkgRHVuZ2VvbiBDcmF3bCBhbmQgZm91bmQgdGhlIHRyZWFzdXJlISBZb3VyIGNvbW1hbmQtbGluZSBza2lsbHMgaGF2ZSBwcm92ZW4gZXhjZXB0aW9uYWwh",
+                                  decodedContent: "Congratulations! You've solved the CLI Dungeon Crawl and found the treasure! Your command-line skills have proven exceptional!"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      name: "Armory",
+                      type: "dir",
+                      children: [
+                        {
+                          name: "Weapon.box",
+                          type: "file",
+                          content: "Various digital weapons are stored here. Most are corrupted and unusable."
+                        }
+                      ]
+                    },
+                    {
+                      name: "StoneKey.key",
+                      type: "special",
+                      content: "A heavy stone key with ancient markings. It seems designed to open something important in the Inner Keep."
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    };
+
+    // Keep track of which node is selected
+    let selectedNode = null;
+
+    // Function to build the tree view
+    function buildTreeView(node, parentElement, isRoot = false) {
+      const nodeDiv = document.createElement('div');
+      nodeDiv.className = `node ${node.type}${isRoot ? ' root' : ''}`;
+      
+      const nodeContent = document.createElement('div');
+      nodeContent.className = 'node-content';
+      nodeContent.textContent = node.name;
+      
+      // Store the node data for reference when clicked
+      nodeContent.dataset.nodeName = node.name;
+      nodeContent.dataset.nodeType = node.type;
+      nodeContent.dataset.nodeContent = node.content;
+      if (node.type === 'treasure') {
+        nodeContent.dataset.nodeDecodedContent = node.decodedContent;
+      }
+      
+      // Add special classes for important items
+      if (node.name === 'StoneKey.key') {
+        nodeDiv.classList.add('key-item');
+      } else if (node.name === 'CursedBook.tome') {
+        nodeDiv.classList.add('cursed-item');
+      } else if (node.name === 'Treasure.txt') {
+        nodeDiv.classList.add('treasure-item');
+        nodeContent.classList.add('blinking');
+      }
+      
+      // Add click handler to show item details
+      nodeContent.addEventListener('click', () => {
+        showItemDetails(node);
+        
+        // Remove highlight from previously selected node
+        if (selectedNode) {
+          selectedNode.classList.remove('selected');
+        }
+        
+        // Highlight this node
+        nodeContent.classList.add('selected');
+        selectedNode = nodeContent;
+      });
+      
+      nodeDiv.appendChild(nodeContent);
+      
+      // If this node has children, create a container for them
+      if (node.children && node.children.length > 0) {
+        const childrenDiv = document.createElement('div');
+        childrenDiv.className = 'node-children';
+        
+        // Sort children: directories first, then files
+        const sortedChildren = [...node.children].sort((a, b) => {
+          if (a.type === 'dir' && b.type !== 'dir') return -1;
+          if (a.type !== 'dir' && b.type === 'dir') return 1;
+          return a.name.localeCompare(b.name);
+        });
+        
+        sortedChildren.forEach(child => {
+          buildTreeView(child, childrenDiv);
+        });
+        
+        nodeDiv.appendChild(childrenDiv);
+      }
+      
+      parentElement.appendChild(nodeDiv);
+    }
+
+    // Function to show item details in the info panel
+    function showItemDetails(node) {
+      const detailsDiv = document.getElementById('itemDetails');
+      let content = `<h3>${node.name}</h3>`;
+      
+      if (node.type === 'dir') {
+        content += `<p><strong>Type:</strong> Directory</p>`;
+        content += `<p>A location within the fortress that can be navigated to using the 'cd' command.</p>`;
+        
+        // Special descriptions for certain directories
+        if (node.name === 'StorageRoom') {
+          content += `<p>This room contains the CursedBook.tome, which is blocking access to the Reading Chamber.</p>`;
+          content += `<div class="command-log">C:\\> attrib -r CursedBook.tome<br>C:\\> del CursedBook.tome</div>`;
+        } else if (node.name === 'ReadingChamber') {
+          content += `<p>A hidden chamber revealed only after the CursedBook.tome is removed. Contains the treasure!</p>`;
+        } else if (node.name === 'OpenedDoor') {
+          content += `<p>Formerly a LockedDoor, now opened using the StoneKey.key.</p>`;
+          content += `<div class="command-log">C:\\> move StoneKey.key C:\\EntranceGrounds\\OuterWalls\\InnerKeep</div>`;
+        }
+      } else if (node.type === 'file') {
+        content += `<p><strong>Type:</strong> File</p>`;
+        content += `<p>Can be read using the 'type' command.</p>`;
+        content += `<p><strong>Content:</strong><br>${node.content}</p>`;
+      } else if (node.type === 'tome') {
+        content += `<p><strong>Type:</strong> Tome (Special File)</p>`;
+        
+        if (node.name === 'CursedBook.tome') {
+          content += `<p>A cursed artifact blocking access to the Reading Chamber. Must be removed using special commands.</p>`;
+          content += `<p><strong>Required actions:</strong></p>`;
+          content += `<div class="command-log">C:\\> attrib -r CursedBook.tome<br>C:\\> del CursedBook.tome</div>`;
+          content += `<p>OR use the special elimination command:</p>`;
+          content += `<div class="command-log">C:\\> attrib -elim CursedBook.tome</div>`;
+        } else if (node.name === 'OldRecords.tome') {
+          content += `<p>Contains ancient records including the vital clue in entry #83.</p>`;
+          content += `<div class="command-log">C:\\> findstr 83 OldRecords.tome</div>`;
+        }
+      } else if (node.type === 'special') {
+        content += `<p><strong>Type:</strong> Special Item</p>`;
+        content += `<p>${node.content}</p>`;
+        content += `<p>This key must be moved to the InnerKeep to unlock the door:</p>`;
+        content += `<div class="command-log">C:\\> move StoneKey.key C:\\EntranceGrounds\\OuterWalls\\InnerKeep</div>`;
+      } else if (node.type === 'treasure') {
+        content += `<p><strong>Type:</strong> Treasure!</p>`;
+        content += `<p>The ultimate goal of your quest - a base64 encoded message.</p>`;
+        content += `<p><strong>Encoded:</strong><br>${node.content}</p>`;
+        content += `<p><strong>Decoded:</strong><br>${node.decodedContent}</p>`;
+        content += `<div class="command-log">C:\\> type Treasure.txt</div>`;
+      }
+      
+      detailsDiv.innerHTML = content;
+    }
+
+    // Initialize the tree view when the page loads
+    document.addEventListener('DOMContentLoaded', () => {
+      const treeRoot = document.getElementById('fileSystemTree');
+      buildTreeView(fileSystem, treeRoot, true);
+      
+      // Initially select and show details for C:
+      showItemDetails(fileSystem);
+    });
+  </script>
+</body>
+</html>
