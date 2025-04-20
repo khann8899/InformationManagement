@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Apps Script Information</title>
+    <style>
+        :root {
+            --primary: #4285F4;
+            --secondary: #34A853;
+            --accent: #FBBC05;
+            --danger: #EA4335;
+            --light: #f8f9fa;
+            --dark: #202124;
+        }
+        
+        body {
+            font-family: 'Google Sans', Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            color: var(--dark);
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 30px 0;
+            border-radius: 10px 10px 0 0;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            margin: 0;
+            font-size: 2.5rem;
+        }
+        
+        .subtitle {
+            font-style: italic;
+            opacity: 0.9;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+        
+        h2 {
+            color: var(--primary);
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+        
+        ul, ol {
+            padding-left: 20px;
+        }
+        
+        li {
+            margin-bottom: 8px;
+        }
+        
+        .faq-item {
+            margin-bottom: 15px;
+        }
+        
+        .question {
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        .answer {
+            margin-left: 20px;
+        }
+        
+        .pros-cons {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .pros, .cons {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .pros h3 {
+            color: var(--secondary);
+        }
+        
+        .cons h3 {
+            color: var(--danger);
+        }
+        
+        .uses-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+        }
+        
+        .use-case {
+            background: var(--light);
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid var(--accent);
+        }
+        
+        .link-section {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .btn {
+            display: inline-block;
+            background-color: var(--primary);
+            color: white;
+            padding: 12px 25px;
+            text-decoration: none;
+            border-radius: 30px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        .btn:hover {
+            background-color: #3367d6;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .pros-cons {
+                flex-direction: column;
+            }
+            
+            .uses-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Google Apps Script</h1>
+            <p class="subtitle">Week 7 (April 16th–21st) — App Script: Backend Simulation</p>
+        </header>
+        
+        <div class="card">
+            <h2>What is Google Apps Script?</h2>
+            <p>Google Apps Script is a cloud-based scripting language (similar to JavaScript) that allows you to automate tasks across Google products like Docs, Sheets, Drive, Gmail, and more. Think of it as a way to add your own "backend" to Google tools without needing your own server.</p>
+        </div>
+        
+        <div class="card">
+            <h2>Understanding the 5Ws</h2>
+            
+            <div class="faq-item">
+                <div class="question">1. What is it?</div>
+                <div class="answer">A scripting tool to automate, customize, and connect Google apps.</div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="question">2. Why is it useful?</div>
+                <div class="answer">Saves time, avoids repetitive work, and enables creative solutions using Google tools.</div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="question">3. Who uses it?</div>
+                <div class="answer">Students, teachers, businesses, developers—anyone using Google Workspace tools.</div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="question">4. When should I use it?</div>
+                <div class="answer">When you want to automate a task (e.g., sending daily emails, updating a sheet, managing calendar events) or connect multiple Google services.</div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="question">5. Where does it run?</div>
+                <div class="answer">In the cloud—no need to install anything. You write code directly in the browser using the Google Apps Script editor.</div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>Creative Uses of App Script</h2>
+            <div class="uses-grid">
+                <div class="use-case">Automatically send birthday wishes from a Google Sheet of friends.</div>
+                <div class="use-case">Turn a Google Form response into a custom certificate in Docs.</div>
+                <div class="use-case">Set up a Gmail autoresponder based on custom rules.</div>
+                <div class="use-case">Daily stock price tracker in Google Sheets using APIs.</div>
+                <div class="use-case">A classroom attendance tracker that updates in real-time.</div>
+                <div class="use-case">Schedule and send calendar invites to multiple people with custom messages.</div>
+                <div class="use-case">Build your own chatbot using Sheets + Gmail + Apps Script.</div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>Pros and Cons</h2>
+            <div class="pros-cons">
+                <div class="pros">
+                    <h3>Pros</h3>
+                    <ul>
+                        <li>Free with Google account.</li>
+                        <li>Easy to use if you know a bit of JavaScript.</li>
+                        <li>Works well with all Google products.</li>
+                        <li>Saves time with automation.</li>
+                        <li>Accessible from anywhere.</li>
+                    </ul>
+                </div>
+                
+                <div class="cons">
+                    <h3>Cons</h3>
+                    <ul>
+                        <li>Limited by Google quotas (daily limits on email sending, etc.).</li>
+                        <li>Can be tricky to debug.</li>
+                        <li>Not great for very complex applications.</li>
+                        <li>Requires some coding knowledge.</li>
+                        <li>Dependent on internet connection.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="link-section">
+            <a href="https://chatgpt.com/share/67ff439a-3548-8005-b138-c007ba70607a" class="btn" target="_blank">View AI Conversation</a>
+        </div>
+        
+        <footer>
+            &copy; 2025 Google Apps Script Information | Created with Claude
+        </footer>
+    </div>
+</body>
+</html>

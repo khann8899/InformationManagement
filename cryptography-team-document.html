@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cryptography Website Project</title>
+    <style>
+        :root {
+            --primary: #000000;
+            --secondary: #ffffff;
+            --accent: #62b6ff;
+            --text: #333333;
+            --light-bg: #f7f7f7;
+            --card-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            color: var(--text);
+            background-color: var(--light-bg);
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: var(--primary);
+            color: var(--secondary);
+            padding: 40px 0;
+            text-align: center;
+            border-radius: 10px 10px 0 0;
+            box-shadow: var(--card-shadow);
+        }
+        
+        h1 {
+            margin: 0;
+            font-size: 2.8rem;
+            letter-spacing: 1px;
+        }
+        
+        .subtitle {
+            color: var(--accent);
+            font-size: 1.2rem;
+            margin-top: 10px;
+        }
+        
+        .team-section {
+            background: var(--secondary);
+            padding: 30px;
+            border-radius: 0 0 10px 10px;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 30px;
+        }
+        
+        .team-title {
+            text-align: center;
+            color: var(--primary);
+            font-size: 1.8rem;
+            margin-bottom: 25px;
+            position: relative;
+        }
+        
+        .team-title:after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: var(--accent);
+        }
+        
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+        
+        .team-member {
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .team-member:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.12);
+        }
+        
+        .member-header {
+            background: var(--primary);
+            color: var(--secondary);
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .member-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin: 0;
+        }
+        
+        .member-role {
+            background: var(--accent);
+            color: var(--primary);
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        
+        .member-content {
+            padding: 20px;
+            background: var(--secondary);
+        }
+        
+        .member-id {
+            color: #888;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            display: block;
+        }
+        
+        .chat-link {
+            display: inline-block;
+            margin-top: 15px;
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+        .chat-link:hover {
+            text-decoration: underline;
+        }
+        
+        .design-section {
+            background: var(--secondary);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: var(--card-shadow);
+        }
+        
+        .design-title {
+            color: var(--primary);
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 10px;
+        }
+        
+        .color-palette {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .color-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .color-swatch {
+            width: 80px;
+            height: 80px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            box-shadow: 0 3px 5px rgba(0,0,0,0.1);
+        }
+        
+        .color-name {
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+        
+        .color-description {
+            font-size: 0.8rem;
+            color: #666;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #888;
+            font-size: 0.9rem;
+            margin-top: 30px;
+        }
+        
+        @media (max-width: 768px) {
+            .team-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Cryptography Website Project</h1>
+            <div class="subtitle">Team Documentation & Development Process</div>
+        </header>
+        
+        <div class="team-section">
+            <h2 class="team-title">Our Team</h2>
+            
+            <div class="team-grid">
+                <div class="team-member">
+                    <div class="member-header">
+                        <div class="member-name">Abu</div>
+                        <div class="member-role">Developer</div>
+                    </div>
+                    <div class="member-content">
+                        <span class="member-id">Student ID: 2417515</span>
+                        <p>I did the role of the developer of the website. I mostly worked with AI and chose algorithms. I had quite a difficult time talking with ChatGPT because it made some errors and I had to talk more to fix it. It even couldn't provide the .html file sometimes as you can see in the chat. When chatGPT made the first website for me I needed to install some external libraries through github(which I didn't wanna do) so I just asked CHatGPT to include all of them in a single .html file.</p>
+                        <a href="https://chatgpt.com/share/6804d0c6-1964-8005-9953-8d4cd3bf354e" class="chat-link" target="_blank">View AI Conversation</a>
+                    </div>
+                </div>
+                
+                <div class="team-member">
+                    <div class="member-header">
+                        <div class="member-name">Khan</div>
+                        <div class="member-role">Tester</div>
+                    </div>
+                    <div class="member-content">
+                        <span class="member-id">Student ID: 2417655</span>
+                        <p>I performed as a tester for the project. I sat together with Abu(developer) and discussed the potential or visible problems. One of the problems we encountered was External libraries(mentioned by Abu) in that moment, ChatGPT also gave us a hard time understanding the task. When asked to merge all the files together it couldn't fully merge them together(shown in the task) we also had a hard time working with AppScript because the error popped up again and again but we eventually fixed it(available in the chat).</p>
+                    </div>
+                </div>
+                
+                <div class="team-member">
+                    <div class="member-header">
+                        <div class="member-name">Samandar</div>
+                        <div class="member-role">Documentor</div>
+                    </div>
+                    <div class="member-content">
+                        <span class="member-id">Student ID: 2417574</span>
+                        <p>I did the role of the documentation of the website. First of all i discussed with boys every problem and what we have to do. The main problem is like a limit of the claude.ai and also it has got a limit on putting words as well as codes for the website. However we had a Chatchpt with subscription but Chatchpt can not work like how claude ai worked without subscription. Even if we had subscription we asked lots of times to Chpt to make us code which works but the Chpt can not make which works for us and after trying for more than seven times we got the code which works but before that we used two accounts to make one website code because of the limitation of the claude.ai we couldn't make code for the website but we got a idea because of limit we put on claude.ai half of the code so it can continue working and making website code which was ready to show our teacher but we mistaken it is not that easy to make a website code which really works so we continue working with Chatchpt and we finally got the code which we asked from it.</p>
+                    </div>
+                </div>
+                
+                <div class="team-member">
+                    <div class="member-header">
+                        <div class="member-name">Nusratulloh</div>
+                        <div class="member-role">UI/UX Designer</div>
+                    </div>
+                    <div class="member-content">
+                        <span class="member-id">Student ID: 2417563</span>
+                        <p>I mostly worked with the Design of the project and provided some concepts that looked very much like professional websites. However, due to some difficulties the project we worked on had changed over time.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="design-section">
+            <h3 class="design-title">Design Themes & Colors</h3>
+            <p>We carefully selected our color palette to create a professional and modern cryptography website.</p>
+            
+            <div class="color-palette">
+                <div class="color-item">
+                    <div class="color-swatch" style="background-color: #000000;"></div>
+                    <div class="color-name">Black</div>
+                    <div class="color-description">Primary color</div>
+                </div>
+                
+                <div class="color-item">
+                    <div class="color-swatch" style="background-color: #ffffff; border: 1px solid #eee;"></div>
+                    <div class="color-name">White</div>
+                    <div class="color-description">Secondary color</div>
+                </div>
+                
+                <div class="color-item">
+                    <div class="color-swatch" style="background-color: #62b6ff;"></div>
+                    <div class="color-name">Light Blue</div>
+                    <div class="color-description">Additional color (delivery part)</div>
+                </div>
+            </div>
+            
+            <p style="margin-top: 20px;">We also wanted to give some understanding by providing directions throughout the website interface.</p>
+        </div>
+        
+        <footer>
+            &copy; 2025 Cryptography Website Project | Team Documentation
+        </footer>
+    </div>
+</body>
+</html>
