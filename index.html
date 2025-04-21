@@ -222,7 +222,8 @@
     </main>
 
     <footer>
-        <p>Information Management Class Portfolio • Created by Khan(2417655)</p>
+        <p>Information Management Class Portfolio </p>
+        <p> Created by Khan(2417655)</p>
     </footer>
 
     <script>
@@ -245,5 +246,30 @@
             content.style.display = 'none';
         }
     </script>
+     <script>
+    function promptPassword() {
+        const password = prompt("Enter the password to view your grades:");
+        if (password !== "alright") {
+            alert("Incorrect password.");
+            return;
+        }
+
+        const url = `https://script.google.com/macros/s/AKfycbwSog6lgrgUddYgKkf-S5oYE7R9dcZgVjnBJCIv1kjq5tDxw94rfzi5A7x6lKYk10Uv/exec`;
+
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                let output = `Total: ${data.total}/${data.max}\n\nDetails:\n`;
+                data.sources.forEach(item => {
+                    output += `${item.category}: ${item.score}/${item.maxScore}\n`;
+                });
+                alert(output);
+            })
+            .catch(error => {
+                alert("Failed to fetch grade data.");
+                console.error(error);
+            });
+    }
+</script>
 </body>
 </html>
