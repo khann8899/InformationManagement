@@ -176,6 +176,28 @@
             border-top: 1px solid var(--primary-color);
             font-size: 0.8rem;
         }
+        .footer-button {
+        background-color: transparent;
+        color: var(--primary-color);
+        border: 1px solid var(--primary-color);
+        padding: 0.3rem 0.6rem;
+        font-family: 'Orbitron', sans-serif;
+        font-size: 0.8rem;
+        cursor: pointer;
+        border-radius: 5px;
+        text-transform: uppercase;
+        transition: all 0.3s ease;
+        box-shadow: 0 0 10px rgba(0, 255, 242, 0.3);
+        margin-left: 0.5rem;
+        }
+
+        .footer-button:hover {
+        color: var(--light-text);
+        background-color: var(--secondary-color);
+        box-shadow: 0 0 15px rgba(0, 255, 242, 0.5);
+        animation: vibrate 0.3s linear infinite;
+        }
+
 
         /* Responsive adjustments */
         @media (max-width: 600px) {
@@ -222,8 +244,10 @@
     </main>
 
     <footer>
-        <p>Information Management Class Portfolio </p>
-        <p> Created by Khan(2417655)</p>
+        <p>Information Management Class Portfolio • 
+            <button id="gradeAccessButton"  onclick="promptPassword()" class="footer-button">Khan(2417655)</button>
+        </p>
+
     </footer>
 
     <script>
