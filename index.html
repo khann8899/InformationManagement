@@ -1,282 +1,237 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Information Management</title>
-  <style>
-    :root {
-      --primary-color: #00fff2;
-      --secondary-color: #0b0b2d;
-      --accent-color: #ff00ff;
-      --dark-bg: #050518;
-      --light-text: #e0e0ff;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Information Management</title>
+    <style>
+        /* Base styles */
+        :root {
+            --primary-color: #00fff2;
+            --secondary-color: #0b0b2d;
+            --accent-color: #ff00ff;
+            --dark-bg: #050518;
+            --light-text: #e0e0ff;
+        }
 
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: 'Orbitron', sans-serif;
-      background-color: var(--dark-bg);
-      color: var(--light-text);
-      background-image: 
-        radial-gradient(circle at 10% 20%, rgba(0, 255, 242, 0.05) 0%, transparent 50%),
-        radial-gradient(circle at 90% 80%, rgba(255, 0, 255, 0.05) 0%, transparent 50%);
-      min-height: 100vh;
-    }
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Orbitron', sans-serif;
+            background-color: var(--dark-bg);
+            color: var(--light-text);
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(0, 255, 242, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 90% 80%, rgba(255, 0, 255, 0.05) 0%, transparent 50%);
+            min-height: 100vh;
+        }
 
-    header {
-      text-align: center;
-      padding: 2rem 0;
-      position: relative;
-      overflow: hidden;
-      border-bottom: 1px solid var(--primary-color);
-    }
+        header {
+            text-align: center;
+            padding: 2rem 0;
+            position: relative;
+            overflow: hidden;
+            border-bottom: 1px solid var(--primary-color);
+        }
 
-    h1 {
-      font-size: 3rem;
-      margin: 0;
-      text-transform: uppercase;
-      letter-spacing: 4px;
-      color: var(--primary-color);
-      text-shadow: 0 0 10px rgba(0, 255, 242, 0.7);
-      position: relative;
-    }
+        h1 {
+            font-size: 3rem;
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            color: var(--primary-color);
+            text-shadow: 0 0 10px rgba(0, 255, 242, 0.7);
+            position: relative;
+        }
 
-    h1::after {
-      content: '';
-      position: absolute;
-      bottom: -10px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 50%;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
-    }
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
+        }
 
-    main {
-      max-width: 800px;
-      margin: 2rem auto;
-      padding: 0 1rem;
-    }
+        .assignment-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1.5rem;
+            padding: 1rem 0;
+        }
 
-    .assignment-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 1.5rem;
-      padding: 1rem 0;
-    }
+        .assignment-button {
+            background-color: var(--secondary-color);
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+            border-radius: 5px;
+            padding: 1rem;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 15px rgba(0, 255, 242, 0.2);
+            text-transform: uppercase;
+        }
 
-    .assignment-button {
-      background-color: var(--secondary-color);
-      color: var(--primary-color);
-      border: 1px solid var(--primary-color);
-      border-radius: 5px;
-      padding: 1rem;
-      font-family: 'Orbitron', sans-serif;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      position: relative;
-      overflow: hidden;
-      box-shadow: 0 0 15px rgba(0, 255, 242, 0.2);
-      text-transform: uppercase;
-    }
+        .assignment-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(0, 255, 242, 0.1), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s ease;
+        }
 
-    .assignment-button::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(45deg, transparent, rgba(0, 255, 242, 0.1), transparent);
-      transform: translateX(-100%);
-      transition: transform 0.6s ease;
-    }
+        .assignment-button:hover {
+            color: var(--light-text);
+            box-shadow: 0 0 20px rgba(0, 255, 242, 0.5);
+        }
 
-    .assignment-button:hover {
-      color: var(--light-text);
-      box-shadow: 0 0 20px rgba(0, 255, 242, 0.5);
-      animation: vibrate 0.3s linear infinite;
-    }
+        .assignment-button:hover::before {
+            transform: translateX(100%);
+        }
 
-    .assignment-button:hover::before {
-      transform: translateX(100%);
-    }
+        .assignment-content {
+            display: none;
+            background-color: rgba(11, 11, 45, 0.7);
+            border: 1px solid var(--primary-color);
+            padding: 1.5rem;
+            margin-top: 2rem;
+            border-radius: 5px;
+            position: relative;
+            box-shadow: 0 0 20px rgba(0, 255, 242, 0.2);
+        }
 
-    @keyframes vibrate {
-      0% { transform: translate(0); }
-      10% { transform: translate(-1px, -1px); }
-      20% { transform: translate(1px, 1px); }
-      30% { transform: translate(-1px, 1px); }
-      40% { transform: translate(1px, -1px); }
-      50% { transform: translate(-1px, -1px); }
-      60% { transform: translate(1px, 1px); }
-      70% { transform: translate(-1px, 1px); }
-      80% { transform: translate(1px, -1px); }
-      90% { transform: translate(-1px, -1px); }
-      100% { transform: translate(0); }
-    }
+        .assignment-content::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 20px;
+            width: 20px;
+            height: 20px;
+            background-color: rgba(11, 11, 45, 0.7);
+            border-top: 1px solid var(--primary-color);
+            border-left: 1px solid var(--primary-color);
+            transform: rotate(45deg);
+        }
 
-    .assignment-content {
-      display: none;
-      background-color: rgba(11, 11, 45, 0.7);
-      border: 1px solid var(--primary-color);
-      padding: 1.5rem;
-      margin-top: 2rem;
-      border-radius: 5px;
-      position: relative;
-      box-shadow: 0 0 20px rgba(0, 255, 242, 0.2);
-    }
+        .assignment-content h2 {
+            color: var(--primary-color);
+            margin-top: 0;
+        }
 
-    .assignment-content::before {
-      content: '';
-      position: absolute;
-      top: -10px;
-      left: 20px;
-      width: 20px;
-      height: 20px;
-      background-color: rgba(11, 11, 45, 0.7);
-      border-top: 1px solid var(--primary-color);
-      border-left: 1px solid var(--primary-color);
-      transform: rotate(45deg);
-    }
+        .close-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
 
-    .assignment-content h2 {
-      color: var(--primary-color);
-      margin-top: 0;
-    }
+        footer {
+            text-align: center;
+            padding: 1rem;
+            margin-top: 2rem;
+            border-top: 1px solid var(--primary-color);
+            font-size: 0.8rem;
+        }
 
-    .close-button {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      background: none;
-      border: none;
-      color: var(--primary-color);
-      font-size: 1.5rem;
-      cursor: pointer;
-    }
+        .footer-button {
+            background-color: transparent;
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+            padding: 0.3rem 0.6rem;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.8rem;
+            cursor: pointer;
+            border-radius: 5px;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(0, 255, 242, 0.3);
+            margin-left: 0.5rem;
+        }
 
-    footer {
-      text-align: center;
-      padding: 1rem;
-      margin-top: 2rem;
-      border-top: 1px solid var(--primary-color);
-      font-size: 0.8rem;
-    }
+        .footer-button:hover {
+            color: var(--light-text);
+            background-color: var(--secondary-color);
+            box-shadow: 0 0 15px rgba(0, 255, 242, 0.5);
+        }
 
-    .footer-button {
-      background-color: transparent;
-      color: var(--primary-color);
-      border: 1px solid var(--primary-color);
-      padding: 0.3rem 0.6rem;
-      font-family: 'Orbitron', sans-serif;
-      font-size: 0.8rem;
-      cursor: pointer;
-      border-radius: 5px;
-      text-transform: uppercase;
-      transition: all 0.3s ease;
-      box-shadow: 0 0 10px rgba(0, 255, 242, 0.3);
-      margin-left: 0.5rem;
-    }
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 2rem;
+            }
 
-    .footer-button:hover {
-      color: var(--light-text);
-      background-color: var(--secondary-color);
-      box-shadow: 0 0 15px rgba(0, 255, 242, 0.5);
-      animation: vibrate 0.3s linear infinite;
-    }
-
-    @media (max-width: 600px) {
-      h1 {
-        font-size: 2rem;
-      }
-      .assignment-grid {
-        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-        gap: 1rem;
-      }
-    }
-
-    #gradeFrame {
-      width: 100%;
-      height: 300px;
-      display: none;
-      border: 1px solid var(--primary-color);
-      border-radius: 5px;
-      margin-top: 1.5rem;
-    }
-  </style>
+            .assignment-grid {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+                gap: 1rem;
+            }
+        }
+    </style>
 </head>
 <body>
-  <header>
-    <h1>Information Management</h1>
-  </header>
+    <header>
+        <h1>Information Management</h1>
+    </header>
 
-  <main>
-    <div class="assignment-grid">
-      <button class="assignment-button" onclick="window.location.href='https://docs.google.com/document/d/1ea5sirAP-nARa1xigoxg5H29WcXxnSTn/edit?usp=sharing'">Assignment 1 - Find Me</button>
-      <button class="assignment-button" onclick="window.location.href='https://docs.google.com/document/d/1eUP2Af2I1zSS-Y3PBjbnDlZtCMNRtLWHhPMDCkg5LfM/edit?usp=sharing'">Assignment 2 - CLI Dungeon Crawl</button>
-      <button class="assignment-button" onclick="window.location.href='https://khann8899.github.io/InformationManagement/dungeon-crawl-visualization.html'">Assignment 2 - Cli Dungeon Map</button>
-      <button class="assignment-button" onclick="window.location.href='https://docs.google.com/document/d/1riJq2JOyG5CiE6CVKD2c4D3CGg9W9uPkO92Y2CNGILk/edit?usp=sharing'">Assignment 4 - Library Database</button>
-      <button class="assignment-button" onclick="window.location.href='https://abu-assignments.netlify.app/encryption_playground.html'">Week 6 - Cryptography</button>
-      <button class="assignment-button" onclick="window.location.href='https://khann8899.github.io/InformationManagement/week6d.html'">Week 6 - Documentation</button>
-      <button class="assignment-button" onclick="window.location.href='https://khann8899.github.io/InformationManagement/week7.html'">Week 7 - AppScript documentation</button>
-      <button class="assignment-button" onclick="showAssignment(8)">Assignment 8</button>
-      <button class="assignment-button" onclick="showAssignment(9)">Assignment 9</button>
-      <button class="assignment-button" onclick="showAssignment(10)">Assignment 10</button>
-      <button class="assignment-button" onclick="showAssignment(11)">Assignment 11</button>
-      <button class="assignment-button" onclick="showAssignment(12)">Assignment 12</button>
-    </div>
+    <main>
+        <div class="assignment-grid">
+            <!-- Assignment buttons (example) -->
+            <button class="assignment-button" onclick="window.location.href='https://docs.google.com/document/d/1ea5sirAP-nARa1xigoxg5H29WcXxnSTn/edit?usp=sharing'">Assignment 1 - Find Me</button>
+            <button class="assignment-button" onclick="window.location.href='https://docs.google.com/document/d/1eUP2Af2I1zSS-Y3PBjbnDlZtCMNRtLWHhPMDCkg5LfM/edit?usp=sharing'">Assignment 2 - CLI Dungeon Crawl</button>
+            <!-- Add more assignment buttons here as needed -->
+        </div>
 
-    <div id="assignmentContent" class="assignment-content">
-      <button class="close-button" onclick="hideAssignment()">×</button>
-      <h2 id="assignmentTitle">Assignment</h2>
-      <div id="assignmentText">
-        <p>Your assignment content will appear here.</p>
-        <p>You can add your assignment details, upload files, or include links to your work.</p>
-      </div>
-    </div>
+        <footer>
+            <p>Information Management Class Portfolio • 
+                <button id="gradeAccessButton" onclick="promptPassword()" class="footer-button">Khan(2417655)</button>
+            </p>
+        </footer>
+    </main>
 
-    <iframe id="gradeFrame"></iframe>
-  </main>
+    <script>
+        function promptPassword() {
+            const password = prompt("Enter the password to view your grades:");
+            if (password !== "alright") {
+                alert("Incorrect password.");
+                return;
+            }
 
-  <footer>
-    <p>Information Management Class Portfolio • 
-      <button id="gradeAccessButton" onclick="promptPassword()" class="footer-button">Khan (2417655)</button>
-    </p>
-  </footer>
+            // Open a new window to display the grade data
+            const gradeWindow = window.open("", "_blank", "width=600,height=400");
 
-  <script>
-    function showAssignment(num) {
-      const content = document.getElementById('assignmentContent');
-      const title = document.getElementById('assignmentTitle');
-      const text = document.getElementById('assignmentText');
+            // URL for your deployed Google Apps Script
+            const url = `https://script.google.com/macros/s/YOUR_DEPLOYED_SCRIPT_ID/exec?password=${password}`;
 
-      title.textContent = `Assignment ${num}`;
-      text.innerHTML = `
-        <p>This is where your content for Assignment ${num} will be displayed.</p>
-        <p>You can customize this section with your assignment details, upload files, or include links to your work.</p>
-      `;
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    let output = `<h2>Your Grades</h2><p>Total: ${data.total}/${data.max}</p><h3>Details:</h3>`;
+                    data.sources.forEach(item => {
+                        output += `<p>${item.category}: ${item.score}/${item.maxScore}</p>`;
+                    });
 
-      content.style.display = 'block';
-    }
-
-    function hideAssignment() {
-      const content = document.getElementById('assignmentContent');
-      content.style.display = 'none';
-    }
-
-    function promptPassword() {
-      const password = prompt("Enter the password to view your grades:");
-      if (!password) return;
-
-      const url = "https://script.google.com/macros/s/AKfycbwSog6lgrgUddYgKkf-S5oYE7R9dcZgVjnBJCIv1kjq5tDxw94rfzi5A7x6lKYk10Uv/exec";
-      const iframe = document.getElementById("gradeFrame");
-      iframe.src = `${url}?password=${password}`;
-      iframe.style.display = "block";
-    }
-  </script>
+                    // Display the fetched grades in the new window
+                    gradeWindow.document.write(output);
+                    gradeWindow.document.close(); // Close the document after writing
+                })
+                .catch(error => {
+                    alert("Failed to fetch grade data.");
+                    console.error(error);
+                });
+        }
+    </script>
 </body>
 </html>
