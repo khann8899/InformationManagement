@@ -55,19 +55,6 @@
             background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
         }
 
-        /* Grades display styles */
-        #grades {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            background-color: rgba(11, 11, 45, 0.8);
-            padding: 10px 15px;
-            color: var(--primary-color);
-            border-radius: 5px;
-            font-size: 1.2rem;
-            box-shadow: 0 0 10px rgba(0, 255, 242, 0.3);
-        }
-
         .assignment-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -110,6 +97,46 @@
 
         .assignment-button:hover::before {
             transform: translateX(100%);
+        }
+
+        .assignment-content {
+            display: none;
+            background-color: rgba(11, 11, 45, 0.7);
+            border: 1px solid var(--primary-color);
+            padding: 1.5rem;
+            margin-top: 2rem;
+            border-radius: 5px;
+            position: relative;
+            box-shadow: 0 0 20px rgba(0, 255, 242, 0.2);
+        }
+
+        .assignment-content::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 20px;
+            width: 20px;
+            height: 20px;
+            background-color: rgba(11, 11, 45, 0.7);
+            border-top: 1px solid var(--primary-color);
+            border-left: 1px solid var(--primary-color);
+            transform: rotate(45deg);
+        }
+
+        .assignment-content h2 {
+            color: var(--primary-color);
+            margin-top: 0;
+        }
+
+        .close-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            cursor: pointer;
         }
 
         footer {
@@ -155,10 +182,8 @@
     </style>
 </head>
 <body>
-    <!-- Grades Display (Top Left Corner) -->
-    <div id="grades">Loading grades...</div>
-
     <header>
+        <div id="grades" style="position: absolute; top: 10px; left: 10px; color: var(--primary-color); font-size: 1.5rem;"></div>
         <h1>Information Management</h1>
     </header>
 
@@ -169,51 +194,40 @@
             <button class="assignment-button" onclick="window.location.href='https://docs.google.com/document/d/1eUP2Af2I1zSS-Y3PBjbnDlZtCMNRtLWHhPMDCkg5LfM/edit?usp=sharing'">Assignment 2 - CLI Dungeon Crawl</button>
             <!-- Add more assignment buttons here as needed -->
         </div>
-
-        <footer>
-            <p>Information Management Class Portfolio • 
-                <button id="gradeAccessButton" onclick="promptPassword()" class="footer-button">Khan(2417655)</button>
-            </p>
-        </footer>
     </main>
 
+    <footer>
+        <p>Information Management Class Portfolio</p>
+    </footer>
+
     <script>
-      function promptPassword() {
-        const password = prompt("Enter the password to view your grades:");
-        if (password !== "alright") {
-            alert("Incorrect password.");
-            return;
-        }
+        // Function to fetch and display grades
+        window.onload = function() {
+            const url = `https://script.google.com/macros/s/AKfycbyY2E5mqZBFzDNPLRjKT1AgJS3ZwFL14FU1_Y9QjUEDFOKtSx7pD11COy4Nhowa-q5h/exec`;
+            
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        alert(data.error);
+                        return;
+                    }
 
-        const url = `https://script.google.com/macros/s/AKfycbxkl9IaamauWaGZEioHdVic1b3DKQZBQp976k2Dfdghu1WSiZyHgOA2Lgj_x2zmMZHq/exec`;  // Replace with the URL from the Apps Script
+                    const gradesDiv = document.getElementById("grades");
+                    let total = 0;
+                    let max = 0;
+                    data.sources.forEach(item => {
+                        total += item.score;
+                        max += item.maxScore;
+                    });
 
-        fetch(url)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data.error) {
-                    alert(data.error);
-                    return;
-                }
-
-                let output = `Total: ${data.total}/${data.max}\n\nDetails:\n`;
-                data.sources.forEach(item => {
-                    output += `${item.category}: ${item.score}/${item.maxScore}\n`;
+                    gradesDiv.innerHTML = `Total: ${total} / ${max} <br>Progress: ${(total / max * 100).toFixed(2)}%`;
+                })
+                .catch(error => {
+                    alert("Failed to fetch grade data.");
+                    console.error(error);
                 });
-                alert(output);
-
-                // Display the grade in the top-left corner
-                document.getElementById('grades').innerHTML = `Total: ${data.total}/${data.max}`;
-            })
-            .catch(error => {
-                alert("Failed to fetch grade data.");
-                console.error(error);
-            });
-    }
+        };
     </script>
 </body>
 </html>
