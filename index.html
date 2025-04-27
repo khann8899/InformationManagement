@@ -55,6 +55,19 @@
             background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
         }
 
+        /* Grades display styles */
+        #grades {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background-color: rgba(11, 11, 45, 0.8);
+            padding: 10px 15px;
+            color: var(--primary-color);
+            border-radius: 5px;
+            font-size: 1.2rem;
+            box-shadow: 0 0 10px rgba(0, 255, 242, 0.3);
+        }
+
         .assignment-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -97,46 +110,6 @@
 
         .assignment-button:hover::before {
             transform: translateX(100%);
-        }
-
-        .assignment-content {
-            display: none;
-            background-color: rgba(11, 11, 45, 0.7);
-            border: 1px solid var(--primary-color);
-            padding: 1.5rem;
-            margin-top: 2rem;
-            border-radius: 5px;
-            position: relative;
-            box-shadow: 0 0 20px rgba(0, 255, 242, 0.2);
-        }
-
-        .assignment-content::before {
-            content: '';
-            position: absolute;
-            top: -10px;
-            left: 20px;
-            width: 20px;
-            height: 20px;
-            background-color: rgba(11, 11, 45, 0.7);
-            border-top: 1px solid var(--primary-color);
-            border-left: 1px solid var(--primary-color);
-            transform: rotate(45deg);
-        }
-
-        .assignment-content h2 {
-            color: var(--primary-color);
-            margin-top: 0;
-        }
-
-        .close-button {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: none;
-            border: none;
-            color: var(--primary-color);
-            font-size: 1.5rem;
-            cursor: pointer;
         }
 
         footer {
@@ -182,6 +155,9 @@
     </style>
 </head>
 <body>
+    <!-- Grades Display (Top Left Corner) -->
+    <div id="grades">Loading grades...</div>
+
     <header>
         <h1>Information Management</h1>
     </header>
@@ -203,40 +179,41 @@
 
     <script>
       function promptPassword() {
-    const password = prompt("Enter the password to view your grades:");
-    if (password !== "alright") {
-        alert("Incorrect password.");
-        return;
-    }
+        const password = prompt("Enter the password to view your grades:");
+        if (password !== "alright") {
+            alert("Incorrect password.");
+            return;
+        }
 
-    const url = `https://script.google.com/macros/s/AKfycbyY2E5mqZBFzDNPLRjKT1AgJS3ZwFL14FU1_Y9QjUEDFOKtSx7pD11COy4Nhowa-q5h/exec`;
+        const url = `https://script.google.com/macros/s/AKfycbxkl9IaamauWaGZEioHdVic1b3DKQZBQp976k2Dfdghu1WSiZyHgOA2Lgj_x2zmMZHq/exec`;  // Replace with the URL from the Apps Script
 
-    fetch(url)
-        .then(response => {
-            // Check if the response is successful
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(data => {
-            // If there is an error in the response, show it
-            if (data.error) {
-                alert(data.error);
-                return;
-            }
+        fetch(url)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                    return;
+                }
 
-            let output = `Total: ${data.total}/${data.max}\n\nDetails:\n`;
-            data.sources.forEach(item => {
-                output += `${item.category}: ${item.score}/${item.maxScore}\n`;
+                let output = `Total: ${data.total}/${data.max}\n\nDetails:\n`;
+                data.sources.forEach(item => {
+                    output += `${item.category}: ${item.score}/${item.maxScore}\n`;
+                });
+                alert(output);
+
+                // Display the grade in the top-left corner
+                document.getElementById('grades').innerHTML = `Total: ${data.total}/${data.max}`;
+            })
+            .catch(error => {
+                alert("Failed to fetch grade data.");
+                console.error(error);
             });
-            alert(output);
-        })
-        .catch(error => {
-            alert("Failed to fetch grade data.");
-            console.error(error);
-        });
-}
+    }
     </script>
 </body>
 </html>
