@@ -205,7 +205,7 @@
         window.onload = function() {
             const url = `https://script.google.com/macros/s/AKfycbwez3hArxYfJVwwR85Y45mEy_dCgXOEAgowjJTr9snurJpZ6MBb-cstgmjM9bFexP2y/exec`;
             
-            fetch(url)
+            fetch(url, { mode: "no-cors" })
                 .then(response => response.json())
                 .then(data => {
                     if (data.error) {
