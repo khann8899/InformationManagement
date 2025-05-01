@@ -168,6 +168,39 @@
             box-shadow: 0 0 15px rgba(0, 255, 242, 0.5);
         }
 
+
+        #gradeCard {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 12px 15px;
+      border-radius: 8px;
+      border: 2px solid var(--card-border, #00ffff);
+      box-shadow: 0 0 8px var(--card-border, #00ffff);
+      background-color: var(--card-bg, #1a1a1a);
+      color: var(--card-text, #ffffff);
+      width: 170px;
+      text-align: center;
+      z-index: 1000;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    #gradeCard h3 {
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+
+    #gradeCard h1 {
+      font-size: 28px;
+      margin: 0;
+      color: #4285f4;
+    }
+
+    #gradeCard p {
+      font-size: 12px;
+      margin-top: 6px;
+    }
+
         /* Responsive adjustments */
         @media (max-width: 600px) {
             h1 {
@@ -182,6 +215,14 @@
     </style>
 </head>
 <body>
+
+<div id="gradeCard">
+  <h3>Grade</h3>
+  <h1 id="finalGrade">Loading...</h1>
+  <p id="pointsEarned">( ... / ... )</p>
+</div>
+
+    
     <header>
         <div id="grades" style="position: absolute; top: 10px; left: 10px; color: var(--primary-color); font-size: 1.5rem;"></div>
         <h1>Information Management</h1>
@@ -202,32 +243,16 @@
 
     <script>
         // Function to fetch and display grades
-        window.onload = function() {
-            const url = `https://script.google.com/macros/s/AKfycbwez3hArxYfJVwwR85Y45mEy_dCgXOEAgowjJTr9snurJpZ6MBb-cstgmjM9bFexP2y/exec`;
-            
-            fetch(url, { mode: "no-cors" })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.error) {
-                        alert(data.error);
-                        return;
-                    }
-
-                    const gradesDiv = document.getElementById("grades");
-                    let total = 0;
-                    let max = 0;
-                    data.sources.forEach(item => {
-                        total += item.score;
-                        max += item.maxScore;
-                    });
-
-                    gradesDiv.innerHTML = `Total: ${total} / ${max} <br>Progress: ${(total / max * 100).toFixed(2)}%`;
-                })
-                .catch(error => {
-                    alert("Failed to fetch grade data.");
-                    console.error(error);
-                });
-        };
+        fetch("https://script.google.com/macros/s/AKfycbxcp3Zta0sf-j5JB9LPss3XiIJtAqhiaJ-N_4u43Jfo5SMLCmOlK7Rc3O8nSapixv_TQw/exec")
+    .then(response => response.json())
+    .then(data => {
+      document.getElementById('finalGrade').textContent = data.finalGrade + "%";
+      document.getElementById('pointsEarned').textContent = (${data.earnedPoints} / ${data.totalPoints});
+    })
+    .catch(error => {
+      document.getElementById('finalGrade').textContent = "Error!";
+      console.error(error);
+    });
     </script>
 </body>
 </html>
