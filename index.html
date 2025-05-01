@@ -243,16 +243,17 @@
 
     <script>
         // Function to fetch and display grades
-        fetch("https://script.google.com/macros/s/AKfycbxcp3Zta0sf-j5JB9LPss3XiIJtAqhiaJ-N_4u43Jfo5SMLCmOlK7Rc3O8nSapixv_TQw/exec")
-    .then(response => response.json())
-    .then(data => {
-      document.getElementById('finalGrade').textContent = data.finalGrade + "%";
-      document.getElementById('pointsEarned').textContent = (${data.earnedPoints} / ${data.totalPoints});
-    })
-    .catch(error => {
-      document.getElementById('finalGrade').textContent = "Error!";
-      console.error(error);
-    });
+       fetch("https://script.google.com/macros/s/AKfycbxcp3Zta0sf-j5JB9LPss3XiIJtAqhiaJ-N_4u43Jfo5SMLCmOlK7Rc3O8nSapixv_TQw/exec")
+  .then(response => response.json())
+  .then(data => {
+    document.getElementById('finalGrade').textContent = data.finalGrade + "%";
+    document.getElementById('pointsEarned').textContent = `${data.earnedPoints} / ${data.totalPoints}`;
+  })
+  .catch(error => {
+    document.getElementById('finalGrade').textContent = "Error!";
+    console.error(error);
+  });
+
     </script>
 </body>
 </html>
