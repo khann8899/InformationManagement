@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 13 - AI Tutor</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            line-height: 1.8;
+            color: #2c3e50;
+            background: #fafafa;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 60px 40px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 1s ease forwards;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 40px;
+        }
+
+        .title {
+            font-size: 2.5rem;
+            font-weight: 300;
+            color: #1a252f;
+            margin-bottom: 10px;
+            letter-spacing: -0.5px;
+        }
+
+        .subtitle {
+            font-size: 1rem;
+            color: #7f8c8d;
+            font-weight: 400;
+        }
+
+        .section {
+            margin-bottom: 50px;
+            padding: 30px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transform: translateY(20px);
+            opacity: 0;
+            animation: slideIn 0.8s ease forwards;
+        }
+
+        .section:nth-child(2) { animation-delay: 0.2s; }
+        .section:nth-child(3) { animation-delay: 0.4s; }
+        .section:nth-child(4) { animation-delay: 0.6s; }
+        .section:nth-child(5) { animation-delay: 0.8s; }
+        .section:nth-child(6) { animation-delay: 1s; }
+        .section:nth-child(7) { animation-delay: 1.2s; }
+
+        @keyframes slideIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section-title {
+            font-size: 1.4rem;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-weight: 600;
+            position: relative;
+            padding-left: 20px;
+        }
+
+        .section-title::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 2px;
+        }
+
+        .section-content {
+            font-size: 1.1rem;
+            color: #34495e;
+            line-height: 1.7;
+        }
+
+        .chat-link {
+            display: inline-block;
+            color: #3498db;
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: all 0.3s ease;
+            word-break: break-all;
+        }
+
+        .chat-link:hover {
+            color: #2980b9;
+            border-bottom-color: #2980b9;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 60px;
+            padding-top: 40px;
+            border-top: 1px solid #e0e0e0;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 40px 20px;
+            }
+            
+            .title {
+                font-size: 2rem;
+            }
+            
+            .section {
+                padding: 20px;
+                margin-bottom: 30px;
+            }
+            
+            .section-title {
+                font-size: 1.2rem;
+            }
+            
+            .section-content {
+                font-size: 1rem;
+            }
+        }
+
+        /* Smooth scrolling for better UX */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Subtle hover effect for sections */
+        .section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="title">Week 13 - AI Tutor</h1>
+            <p class="subtitle">Information Management Class Documentation</p>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">Chat Link</h2>
+            <div class="section-content">
+                <a href="https://chatgpt.com/share/683c2789-86ac-8005-b8ba-608d3ea83965" class="chat-link" target="_blank" rel="noopener noreferrer">
+                    https://chatgpt.com/share/683c2789-86ac-8005-b8ba-608d3ea83965
+                </a>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">Chosen Topic</h2>
+            <div class="section-content">
+                I chose "How scams work topic" because it aligns well with my interests and wanted to see if there is more I can learn other than things I already know
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">Process</h2>
+            <div class="section-content">
+                It was the first time I have used Socratic style learning and it was pretty fun. I asked AI to explain me as if I don't know anything about the topic and give examples from real life which helped me understand the topic better
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">What I Learned</h2>
+            <div class="section-content">
+                Most of the things were not new for me but in this style of learning, I could deeply question things and I realised that scams are actually tied very close to legitimacy of the person offering not the deal itself
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">Learning Style</h2>
+            <div class="section-content">
+                I think this learning style has both advantages and disadvantages. It usually works better on the topics you already know and it would be hard to use this style if it is a technical topic
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">Conclusion</h2>
+            <div class="section-content">
+                Overall, using Socratic style learning was a good experience and it definitely helped me improve my critical thinking about scams and business.
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Documentation created for Information Management Class</p>
+        </div>
+    </div>
+
+    <script>
+        // Add smooth scroll behavior to links
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add a subtle typing effect to the title
+            const title = document.querySelector('.title');
+            const titleText = title.textContent;
+            title.textContent = '';
+            
+            let i = 0;
+            const typeInterval = setInterval(() => {
+                title.textContent += titleText.charAt(i);
+                i++;
+                if (i >= titleText.length) {
+                    clearInterval(typeInterval);
+                }
+            }, 100);
+
+            // Add intersection observer for better animation timing
+            const sections = document.querySelectorAll('.section');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.animationPlayState = 'running';
+                    }
+                });
+            }, {
+                threshold: 0.1
+            });
+
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+
+            // Add click effect to sections
+            sections.forEach(section => {
+                section.addEventListener('click', function() {
+                    this.style.transform = 'scale(0.98)';
+                    setTimeout(() => {
+                        this.style.transform = '';
+                    }, 150);
+                });
+            });
+        });
+
+        // Add keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+                const sections = document.querySelectorAll('.section');
+                const currentFocus = document.activeElement;
+                let currentIndex = Array.from(sections).indexOf(currentFocus);
+                
+                if (e.key === 'ArrowDown' && currentIndex < sections.length - 1) {
+                    sections[currentIndex + 1].focus();
+                } else if (e.key === 'ArrowUp' && currentIndex > 0) {
+                    sections[currentIndex - 1].focus();
+                }
+            }
+        });
+
+        // Make sections focusable for accessibility
+        document.querySelectorAll('.section').forEach(section => {
+            section.setAttribute('tabindex', '0');
+        });
+    </script>
+</body>
+</html>
