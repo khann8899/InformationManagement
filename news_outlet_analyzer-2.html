@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News Outlet Media Literacy Analyzer</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .filter-group label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #555;
+        }
+
+        select, input {
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .news-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .news-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+        }
+
+        .news-card h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .news-card .country {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            opacity: 0.8;
+        }
+
+        .badges {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .bias-left { background: #ff6b6b; color: white; }
+        .bias-center-left { background: #ffa726; color: white; }
+        .bias-center { background: #66bb6a; color: white; }
+        .bias-center-right { background: #42a5f5; color: white; }
+        .bias-right { background: #7e57c2; color: white; }
+        .bias-far-right { background: #d32f2f; color: white; }
+
+        .factuality-very-high { background: #2e7d32; color: white; }
+        .factuality-high { background: #388e3c; color: white; }
+        .factuality-mostly-high { background: #689f38; color: white; }
+        .factuality-mixed { background: #fbc02d; color: #333; }
+        .factuality-low { background: #f57c00; color: white; }
+
+        .trust-score {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .trust-excellent { background: #e8f5e8; color: #2e7d32; }
+        .trust-good { background: #fff3e0; color: #f57c00; }
+        .trust-poor { background: #ffebee; color: #d32f2f; }
+
+        .description {
+            color: #666;
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .chart-container {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+
+        .chart-container h3 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .education-panel {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+
+        .education-panel h3 {
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .education-content {
+            line-height: 1.6;
+            color: #666;
+        }
+
+        .education-content h4 {
+            color: #333;
+            margin: 15px 0 8px 0;
+        }
+
+        .stats-container {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        .balance-meter {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .balance-bar {
+            height: 20px;
+            background: linear-gradient(to right, #ff6b6b 0%, #ffa726 25%, #66bb6a 50%, #42a5f5 75%, #7e57c2 100%);
+            border-radius: 10px;
+            margin: 15px 0;
+            position: relative;
+        }
+
+        .balance-indicator {
+            position: absolute;
+            top: -5px;
+            width: 4px;
+            height: 30px;
+            background: #333;
+            border-radius: 2px;
+            transition: left 0.3s ease;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .controls {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .news-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>Understanding Media Bias</h1>
+        </header>
+
+        <div class="controls">
+            <div class="filter-group">
+                <label for="outletFilter">News Outlet</label>
+                <select id="outletFilter">
+                    <option value="">All Outlets</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label for="biasFilter">Political Bias</label>
+                <select id="biasFilter">
+                    <option value="">All Biases</option>
+                    <option value="Far-Right">Far-Right</option>
+                    <option value="Right">Right</option>
+                    <option value="Center-Right">Center-Right</option>
+                    <option value="Center">Center</option>
+                    <option value="Center-Left">Center-Left</option>
+                    <option value="Left">Left</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label for="countryFilter">Country</label>
+                <select id="countryFilter">
+                    <option value="">All Countries</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label for="factualityFilter">Factual Reporting</label>
+                <select id="factualityFilter">
+                    <option value="">All Levels</option>
+                    <option value="Very High">Very High</option>
+                    <option value="High">High</option>
+                    <option value="Mostly High">Mostly High</option>
+                    <option value="Mixed">Mixed</option>
+                    <option value="Low">Low</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label for="searchInput">Search Outlets</label>
+                <input type="text" id="searchInput" placeholder="Search by name...">
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="news-container">
+                <div id="newsGrid" class="news-grid"></div>
+            </div>
+            
+            <div class="sidebar">
+                <div class="stats-container">
+                    <h3>Quick Stats</h3>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-number" id="totalOutlets">10</div>
+                            <div class="stat-label">Total Outlets</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" id="avgTrust">7.2</div>
+                            <div class="stat-label">Avg Trust Score</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" id="highFactuality">6</div>
+                            <div class="stat-label">High Factuality</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" id="centerBias">2</div>
+                            <div class="stat-label">Center Bias</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="balance-meter">
+                    <h3>Political Balance</h3>
+                    <p style="font-size: 0.9rem; color: #666; margin-bottom: 15px;">Shows the political lean of your current selection</p>
+                    <div class="balance-bar">
+                        <div class="balance-indicator" id="balanceIndicator"></div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: #888; margin-top: 5px;">
+                        <span>Left</span>
+                        <span>Center</span>
+                        <span>Right</span>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <h3>Bias Distribution</h3>
+                    <div style="position: relative; height: 350px; width: 100%; overflow: hidden;">
+                        <canvas id="biasChart" style="max-height: 100%; max-width: 100%;"></canvas>
+                    </div>
+                </div>
+
+                <div class="education-panel">
+                    <h3>🎓 Understanding Media Bias</h3>
+                    <div class="education-content">
+                        <h4>Political Bias</h4>
+                        <p>The tendency of a news source to favor particular political viewpoints. All sources have some degree of bias - the key is recognizing and accounting for it.</p>
+                        
+                        <h4>Factual Reporting</h4>
+                        <p>How accurately a source reports facts and avoids misinformation. High factuality doesn't eliminate bias but ensures claims are verifiable.</p>
+                        
+                        <h4>Trust Score</h4>
+                        <p>A composite measure considering accuracy, transparency, accountability, and editorial standards. Higher scores indicate more reliable sources.</p>
+                        
+                        <h4>💡 Pro Tip</h4>
+                        <p>Consume news from multiple sources across the political spectrum. Cross-reference important stories and always check the original sources cited.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // News data
+        const newsData = [
+            {
+                "name": "BBC News",
+                "country": "🇬🇧 UK",
+                "bias": "Center-Left",
+                "factuality": "High",
+                "trust_score": 9.2,
+                "website": "https://www.bbc.com/news",
+                "description": "Publicly funded and known for formal neutrality. Criticized by both right and left—proof it's doing something right."
+            },
+            {
+                "name": "CNN",
+                "country": "🇺🇸 USA",
+                "bias": "Left",
+                "factuality": "Mixed",
+                "trust_score": 6.4,
+                "website": "https://www.cnn.com",
+                "description": "Once the gold standard of news, now accused of heavy liberal bias and clickbait drama during election cycles."
+            },
+            {
+                "name": "Fox News",
+                "country": "🇺🇸 USA",
+                "bias": "Right",
+                "factuality": "Mixed",
+                "trust_score": 5.1,
+                "website": "https://www.foxnews.com",
+                "description": "Leans hard right. Known for sensationalism, lawsuits over election misinformation, yet dominates conservative viewership."
+            },
+            {
+                "name": "The New York Times",
+                "country": "🇺🇸 USA",
+                "bias": "Left",
+                "factuality": "High",
+                "trust_score": 8.5,
+                "website": "https://www.nytimes.com",
+                "description": "Elite liberal publication. Revered for investigative work. Criticized for editorial bias and selective outrage."
+            },
+            {
+                "name": "The Guardian",
+                "country": "🇬🇧 UK",
+                "bias": "Left",
+                "factuality": "High",
+                "trust_score": 8.8,
+                "website": "https://www.theguardian.com",
+                "description": "Progressive and activist-friendly. Strong on climate and human rights, but often viewed as anti-capitalist or anti-American by critics."
+            },
+            {
+                "name": "Reuters",
+                "country": "🇬🇧 UK",
+                "bias": "Center",
+                "factuality": "Very High",
+                "trust_score": 9.5,
+                "website": "https://www.reuters.com",
+                "description": "Dry, factual, and respected worldwide. Rarely in controversy—because it sticks to straight reporting."
+            },
+            {
+                "name": "Al Jazeera",
+                "country": "🇶🇦 Qatar",
+                "bias": "Center-Left",
+                "factuality": "Mostly High",
+                "trust_score": 7.8,
+                "website": "https://www.aljazeera.com",
+                "description": "Middle East-focused. Praised for global south coverage. Criticized for political ties to Qatari government."
+            },
+            {
+                "name": "The Wall Street Journal",
+                "country": "🇺🇸 USA",
+                "bias": "Center-Right",
+                "factuality": "High",
+                "trust_score": 8.9,
+                "website": "https://www.wsj.com",
+                "description": "Business-first outlet. Reporting is solid; opinion section tilts conservative, causing occasional split perception."
+            },
+            {
+                "name": "Associated Press (AP)",
+                "country": "🇺🇸 USA",
+                "bias": "Center",
+                "factuality": "Very High",
+                "trust_score": 9.6,
+                "website": "https://apnews.com",
+                "description": "Wire service used by others. Minimal bias, fast reporting. Almost boringly accurate—which is a good thing."
+            },
+            {
+                "name": "Russia Today (RT)",
+                "country": "🇷🇺 Russia",
+                "bias": "Far-Right",
+                "factuality": "Low",
+                "trust_score": 3.2,
+                "website": "https://www.rt.com",
+                "description": "State-owned propaganda machine. Banned in multiple countries for spreading disinfo and serving Kremlin narratives."
+            }
+        ];
+
+        let filteredData = [...newsData];
+        let biasChart;
+
+        // Initialize the application
+        function init() {
+            populateOutletFilter();
+            populateCountryFilter();
+            renderNewsCards();
+            updateStats();
+            // Delay chart creation to prevent layout shifts
+            setTimeout(() => {
+                createBiasChart();
+                updateBalanceMeter();
+            }, 100);
+            
+            // Event listeners
+            document.getElementById('outletFilter').addEventListener('change', filterData);
+            document.getElementById('biasFilter').addEventListener('change', filterData);
+            document.getElementById('countryFilter').addEventListener('change', filterData);
+            document.getElementById('factualityFilter').addEventListener('change', filterData);
+            document.getElementById('searchInput').addEventListener('input', filterData);
+        }
+
+        // Populate outlet filter options
+        function populateOutletFilter() {
+            const outletFilter = document.getElementById('outletFilter');
+            
+            newsData.forEach(outlet => {
+                const option = document.createElement('option');
+                option.value = outlet.name;
+                option.textContent = outlet.name;
+                outletFilter.appendChild(option);
+            });
+        }
+
+        // Populate country filter options
+        function populateCountryFilter() {
+            const countries = [...new Set(newsData.map(outlet => outlet.country))];
+            const countryFilter = document.getElementById('countryFilter');
+            
+            countries.forEach(country => {
+                const option = document.createElement('option');
+                option.value = country;
+                option.textContent = country;
+                countryFilter.appendChild(option);
+            });
+        }
+
+        // Filter data based on current filters
+        function filterData() {
+            const outletFilter = document.getElementById('outletFilter').value;
+            const biasFilter = document.getElementById('biasFilter').value;
+            const countryFilter = document.getElementById('countryFilter').value;
+            const factualityFilter = document.getElementById('factualityFilter').value;
+            const searchInput = document.getElementById('searchInput').value.toLowerCase();
+
+            filteredData = newsData.filter(outlet => {
+                const matchesOutlet = !outletFilter || outlet.name === outletFilter;
+                const matchesBias = !biasFilter || outlet.bias === biasFilter;
+                const matchesCountry = !countryFilter || outlet.country === countryFilter;
+                const matchesFactuality = !factualityFilter || outlet.factuality === factualityFilter;
+                const matchesSearch = !searchInput || outlet.name.toLowerCase().includes(searchInput);
+                
+                return matchesOutlet && matchesBias && matchesCountry && matchesFactuality && matchesSearch;
+            });
+
+            renderNewsCards();
+            updateStats();
+            updateBiasChart();
+            updateBalanceMeter();
+        }
+
+        // Render news cards
+        function renderNewsCards() {
+            const newsGrid = document.getElementById('newsGrid');
+            newsGrid.innerHTML = '';
+
+            if (filteredData.length === 0) {
+                newsGrid.innerHTML = '<div class="no-results">No outlets match your current filters. Try adjusting your criteria.</div>';
+                return;
+            }
+
+            filteredData.forEach(outlet => {
+                const card = document.createElement('div');
+                card.className = 'news-card';
+                
+                const trustClass = outlet.trust_score >= 8 ? 'trust-excellent' : 
+                                 outlet.trust_score >= 6 ? 'trust-good' : 'trust-poor';
+                
+                card.innerHTML = `
+                    <h3>${outlet.name}</h3>
+                    <div class="country">${outlet.country}</div>
+                    <div class="badges">
+                        <span class="badge ${getBiasClass(outlet.bias)}">${outlet.bias}</span>
+                        <span class="badge ${getFactualityClass(outlet.factuality)}">${outlet.factuality}</span>
+                    </div>
+                    <div class="trust-score ${trustClass}">
+                        Trust Score: ${outlet.trust_score}/10
+                    </div>
+                    <div class="description">${outlet.description}</div>
+                `;
+                
+                newsGrid.appendChild(card);
+            });
+        }
+
+        // Get CSS class for bias badge
+        function getBiasClass(bias) {
+            const biasMap = {
+                'Far-Right': 'bias-far-right',
+                'Right': 'bias-right',
+                'Center-Right': 'bias-center-right',
+                'Center': 'bias-center',
+                'Center-Left': 'bias-center-left',
+                'Left': 'bias-left'
+            };
+            return biasMap[bias] || 'bias-center';
+        }
+
+        // Get CSS class for factuality badge
+        function getFactualityClass(factuality) {
+            const factualityMap = {
+                'Very High': 'factuality-very-high',
+                'High': 'factuality-high',
+                'Mostly High': 'factuality-mostly-high',
+                'Mixed': 'factuality-mixed',
+                'Low': 'factuality-low'
+            };
+            return factualityMap[factuality] || 'factuality-mixed';
+        }
+
+        // Update statistics
+        function updateStats() {
+            document.getElementById('totalOutlets').textContent = filteredData.length;
+            
+            const avgTrust = filteredData.length > 0 ? 
+                (filteredData.reduce((sum, outlet) => sum + outlet.trust_score, 0) / filteredData.length).toFixed(1) : '0.0';
+            document.getElementById('avgTrust').textContent = avgTrust;
+            
+            const highFactuality = filteredData.filter(outlet => 
+                outlet.factuality === 'High' || outlet.factuality === 'Very High').length;
+            document.getElementById('highFactuality').textContent = highFactuality;
+            
+            const centerBias = filteredData.filter(outlet => outlet.bias === 'Center').length;
+            document.getElementById('centerBias').textContent = centerBias;
+        }
+
+        // Create bias distribution chart
+        function createBiasChart() {
+            const ctx = document.getElementById('biasChart').getContext('2d');
+            biasChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        data: [],
+                        backgroundColor: [
+                            '#d32f2f', // Far-Right
+                            '#7e57c2', // Right
+                            '#42a5f5', // Center-Right
+                            '#66bb6a', // Center
+                            '#ffa726', // Center-Left
+                            '#ff6b6b'  // Left
+                        ],
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    animation: {
+                        duration: 0 // Disable animations to prevent layout shifts
+                    },
+                    layout: {
+                        padding: {
+                            top: 10,
+                            bottom: 10,
+                            left: 10,
+                            right: 10
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 10,
+                                usePointStyle: true,
+                                boxWidth: 12
+                            }
+                        }
+                    }
+                }
+            });
+            updateBiasChart();
+        }
+
+        // Update bias chart
+        function updateBiasChart() {
+            const biasCounts = {};
+            filteredData.forEach(outlet => {
+                biasCounts[outlet.bias] = (biasCounts[outlet.bias] || 0) + 1;
+            });
+
+            biasChart.data.labels = Object.keys(biasCounts);
+            biasChart.data.datasets[0].data = Object.values(biasCounts);
+            biasChart.update();
+        }
+
+        // Update balance meter
+        function updateBalanceMeter() {
+            const biasValues = {
+                'Far-Right': -2,
+                'Right': -1,
+                'Center-Right': -0.5,
+                'Center': 0,
+                'Center-Left': 0.5,
+                'Left': 1
+            };
+
+            if (filteredData.length === 0) {
+                document.getElementById('balanceIndicator').style.left = '50%';
+                return;
+            }
+
+            const totalBias = filteredData.reduce((sum, outlet) => {
+                return sum + (biasValues[outlet.bias] || 0);
+            }, 0);
+
+            const avgBias = totalBias / filteredData.length;
+            const position = 50 + (avgBias * 25); // Convert to percentage
+            const clampedPosition = Math.max(0, Math.min(100, position));
+            
+            document.getElementById('balanceIndicator').style.left = clampedPosition + '%';
+        }
+
+        // Initialize the application when the page loads
+        init();
+    </script>
+</body>
+</html>
