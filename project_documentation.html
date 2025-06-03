@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News Outlet Comparison Tool - Project Documentation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+            padding: 40px 0;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .nav-tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .tab-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .tab-btn:hover,
+        .tab-btn.active {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .content-section {
+            display: none;
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .content-section.active {
+            display: block;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-title {
+            color: #667eea;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .section-content {
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-card h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .tech-badge {
+            background: #667eea;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .problem-solution {
+            background: #f8f9fa;
+            border-left: 4px solid #dc3545;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 0 10px 10px 0;
+        }
+
+        .solution {
+            border-left-color: #28a745;
+        }
+
+        .cta-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 15px;
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .cta-btn {
+            display: inline-block;
+            background: white;
+            color: #667eea;
+            padding: 15px 30px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: bold;
+            margin: 20px 10px;
+            transition: all 0.3s ease;
+        }
+
+        .cta-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        .step-list {
+            counter-reset: step-counter;
+        }
+
+        .step-item {
+            counter-increment: step-counter;
+            position: relative;
+            background: #f8f9fa;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 10px;
+            padding-left: 60px;
+        }
+
+        .step-item::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #667eea;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .content-section {
+                padding: 20px;
+            }
+            
+            .nav-tabs {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .tab-btn {
+                width: 200px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📊 News Outlet Comparison Tool</h1>
+            <p class="subtitle">Interactive Media Literacy & Bias Analysis Platform</p>
+        </header>
+
+        <nav class="nav-tabs">
+            <button class="tab-btn active" onclick="showSection('intro')">📘 Introduction</button>
+            <button class="tab-btn" onclick="showSection('architecture')">🏗️ Architecture</button>
+            <button class="tab-btn" onclick="showSection('features')">🧠 Features</button>
+            <button class="tab-btn" onclick="showSection('enhancements')">✨ Enhancements</button>
+            <button class="tab-btn" onclick="showSection('learning')">🧠 Learning</button>
+            <button class="tab-btn" onclick="showSection('usage')">🚀 Usage</button>
+            <button class="tab-btn" onclick="showSection('challenges')">⚡ Challenges</button>
+            <button class="tab-btn" onclick="showSection('summary')">📁 Summary</button>
+        </nav>
+
+        <section id="intro" class="content-section active">
+            <h2 class="section-title">📘 Project Introduction</h2>
+            <div class="section-content">
+                <p>This project is a <strong>browser-based interactive tool</strong> designed to explore and compare news outlets based on bias, factuality, and country of origin. The primary goal is to help users develop <em>media literacy</em> by providing an intuitive interface to filter and visualize media sources through engaging charts and interactive controls.</p>
+                
+                <p>In today's information-rich environment, understanding the political leanings and credibility of news sources is crucial for making informed decisions. This tool democratizes access to media analysis by presenting complex data in an easily digestible format.</p>
+            </div>
+        </section>
+
+        <section id="architecture" class="content-section">
+            <h2 class="section-title">🏗️ Technical Architecture</h2>
+            <div class="section-content">
+                <p>The project follows a <strong>single-page web application</strong> architecture, prioritizing simplicity and performance:</p>
+                
+                <div class="tech-stack">
+                    <span class="tech-badge">HTML5</span>
+                    <span class="tech-badge">CSS3</span>
+                    <span class="tech-badge">Vanilla JavaScript</span>
+                    <span class="tech-badge">Chart.js</span>
+                    <span class="tech-badge">JSON Data</span>
+                </div>
+
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <h3>🎨 Frontend Layer</h3>
+                        <p>Clean, responsive interface built with semantic HTML and modern CSS techniques including flexbox and grid layouts.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>📊 Visualization Engine</h3>
+                        <p>Chart.js powers dynamic bar and pie charts that update in real-time based on user filters and selections.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>💾 Data Management</h3>
+                        <p>JSON data embedded directly in HTML for fast loading and offline functionality without external dependencies.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>🔧 Component Structure</h3>
+                        <p>Modular design with distinct components for filtering UI, chart area, outlet information panel, and educational content.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="features" class="content-section">
+            <h2 class="section-title">🧠 Core Features</h2>
+            <div class="section-content">
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <h3>✅ Multi-Criteria Filtering</h3>
+                        <p>Advanced search capabilities allowing users to filter outlets by bias (left, right, center), factuality levels (high, mixed), and country of origin.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>✅ Interactive Visualizations</h3>
+                        <p>Dynamic chart rendering that provides visual comparisons of outlets, making complex media landscape data immediately comprehensible.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>✅ Detailed Data Query</h3>
+                        <p>Click and hover interactions reveal comprehensive information about each outlet, including ratings, background, and credibility metrics.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>✅ Responsive Design</h3>
+                        <p>Seamless experience across all devices - from desktop computers to mobile phones with adaptive layouts and touch-friendly interfaces.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="enhancements" class="content-section">
+            <h2 class="section-title">✨ Creative Enhancements</h2>
+            <div class="section-content">
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <h3>🍽️ Balanced Media Diet</h3>
+                        <p>Innovative feature concept that suggests a diverse mix of news sources to help users avoid echo chambers and information bubbles.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>🎯 Custom Bias Filtering</h3>
+                        <p>Sophisticated filtering system combining bias and factuality metrics for nuanced media source evaluation.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>🎓 Media Literacy Panel</h3>
+                        <p>Educational component that teaches users about media bias, fact-checking, and critical thinking skills for news consumption.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>🏷️ Visual Badges System</h3>
+                        <p>Intuitive color-coded badges and tags that instantly communicate bias levels and factuality ratings at a glance.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="learning" class="content-section">
+            <h2 class="section-title">🧠 Key Learning Outcomes</h2>
+            <div class="section-content">
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <h3>📊 Data Visualization</h3>
+                        <p>Mastered Chart.js implementation for creating dynamic, interactive bar and pie charts with real-time data updates.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>🔍 DOM Manipulation</h3>
+                        <p>Developed expertise in vanilla JavaScript for dynamic content filtering, event handling, and real-time UI updates.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>📱 Responsive Design</h3>
+                        <p>Gained proficiency in creating mobile-first, responsive layouts using modern CSS techniques and best practices.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>👥 User Experience</h3>
+                        <p>Learned to design from the user's perspective, prioritizing intuitive navigation and accessible information architecture.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="usage" class="content-section">
+            <h2 class="section-title">🚀 How to Use the Tool</h2>
+            <div class="section-content">
+                <div class="step-list">
+                    <div class="step-item">
+                        <strong>Access the Application</strong><br>
+                        Navigate to the GitHub Pages URL in any modern web browser for immediate access to the tool.
+                    </div>
+                    <div class="step-item">
+                        <strong>Apply Filters</strong><br>
+                        Use the intuitive dropdown menus and filter controls to narrow down results based on your specific criteria.
+                    </div>
+                    <div class="step-item">
+                        <strong>Explore Visualizations</strong><br>
+                        Watch as charts update in real-time, providing instant visual feedback on your filtered dataset.
+                    </div>
+                    <div class="step-item">
+                        <strong>Investigate Details</strong><br>
+                        Click or hover over chart elements and outlet listings to reveal comprehensive information and ratings.
+                    </div>
+                    <div class="step-item">
+                        <strong>Learn More</strong><br>
+                        Explore the integrated media literacy panel to deepen your understanding of bias and factuality in news media.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="challenges" class="content-section">
+            <h2 class="section-title">⚡ Technical Challenges & Solutions</h2>
+            <div class="section-content">
+                <div class="problem-solution">
+                    <h3>🔧 Chart.js Positioning Issues</h3>
+                    <p><strong>Problem:</strong> Browser performance lag and chart positioning conflicts causing rendering issues.</p>
+                    <p><strong>Solution:</strong> Implemented fixed positioning strategy and optimized rendering pipeline for smooth performance.</p>
+                </div>
+
+                <div class="problem-solution solution">
+                    <h3>📊 Bias Indicator Direction</h3>
+                    <p><strong>Problem:</strong> Bias indicators displaying in incorrect direction, confusing user interpretation.</p>
+                    <p><strong>Solution:</strong> Corrected indicator values by adjusting from positive to negative scale for accurate representation.</p>
+                </div>
+
+                <div class="problem-solution">
+                    <h3>🧹 Information Overload</h3>
+                    <p><strong>Problem:</strong> AI-generated content included unnecessary information cluttering the interface.</p>
+                    <p><strong>Solution:</strong> Carefully curated content, removed extraneous elements, and repositioned information blocks for optimal UX.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="summary" class="content-section">
+            <h2 class="section-title">📁 Project Summary & Reflection</h2>
+            <div class="section-content">
+                <p>This project successfully demonstrates the intersection of <strong>data science</strong>, <strong>web development</strong>, and <strong>media literacy education</strong>. The development process was streamlined and efficient, with a primary focus on data curation and user experience design.</p>
+
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <h3>🎯 Project Focus</h3>
+                        <p>Concentrated efforts on data quality and accuracy, ensuring the tool provides reliable insights for media literacy development.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>🤖 AI Collaboration</h3>
+                        <p>Leveraged ChatGPT's capabilities for personalized data generation while maintaining editorial control over content quality and relevance.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>🚀 Future Vision</h3>
+                        <p>Plans to expand functionality with additional data sources, advanced analytics, and integration into broader media literacy initiatives.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>💡 Technical Learning</h3>
+                        <p>While AI handled much of the technical implementation, the project required significant conceptual planning and user experience design.</p>
+                    </div>
+                </div>
+
+                <p style="margin-top: 30px; font-style: italic; text-align: center;">
+                    "The future of media literacy lies in making complex information accessible and engaging for everyday users."
+                </p>
+            </div>
+        </section>
+
+        <div class="cta-section">
+            <h2>🌟 Experience the Tool</h2>
+            <p>Ready to explore media bias and develop your media literacy skills?</p>
+            <a href="https://khann8899.github.io/InformationManagement/project2.html" class="cta-btn" target="_blank">🚀 Launch Application</a>
+            <a href="https://github.com/khann8899/InformationManagement" class="cta-btn" target="_blank">📚 View Source Code</a>
+        </div>
+    </div>
+
+    <script>
+        function showSection(sectionId) {
+            // Hide all sections
+            const sections = document.querySelectorAll('.content-section');
+            sections.forEach(section => {
+                section.classList.remove('active');
+            });
+
+            // Remove active class from all buttons
+            const buttons = document.querySelectorAll('.tab-btn');
+            buttons.forEach(button => {
+                button.classList.remove('active');
+            });
+
+            // Show selected section
+            document.getElementById(sectionId).classList.add('active');
+            
+            // Add active class to clicked button
+            event.target.classList.add('active');
+
+            // Smooth scroll to top of content
+            document.querySelector('.content-section.active').scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
+
+        // Add some interactive animations
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animate feature cards on scroll
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver(function(entries) {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, observerOptions);
+
+            // Initially hide cards for animation
+            const cards = document.querySelectorAll('.feature-card');
+            cards.forEach(card => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px)';
+                card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                observer.observe(card);
+            });
+
+            // Add keyboard navigation
+            document.addEventListener('keydown', function(e) {
+                if (e.key >= '1' && e.key <= '8') {
+                    const sections = ['intro', 'architecture', 'features', 'enhancements', 'learning', 'usage', 'challenges', 'summary'];
+                    const index = parseInt(e.key) - 1;
+                    if (sections[index]) {
+                        showSection(sections[index]);
+                        document.querySelector(`[onclick="showSection('${sections[index]}')"]`).classList.add('active');
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
