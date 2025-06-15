@@ -377,8 +377,11 @@
         <button onclick="closeModal()" style="position:absolute; top:10px; right:15px; background:none; border:none; font-size:24px; cursor:pointer;">×</button>
         <h3 style="text-align:center; margin-bottom:20px;">Outlet Comparison</h3>
         <div id="comparisonContent" style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
-            <!-- Filled dynamically -->
-        </div>
+    <!-- Chart will go here -->
+    <div style="grid-column: 1 / -1;">
+        <canvas id="compareChart" style="max-width:100%; height:300px;"></canvas>
+    </div>
+</div>
     </div>
 </div>
         <div class="main-content">
@@ -814,27 +817,86 @@ document.getElementById('compareBtn').addEventListener('click', () => {
     const outlet1 = newsData.find(o => o.name === val1);
     const outlet2 = newsData.find(o => o.name === val2);
 
-    const content = `
-        <div>
-            <h4>${outlet1.name}</h4>
-            <p><strong>Country:</strong> ${outlet1.country}</p>
-            <p><strong>Bias:</strong> ${outlet1.bias}</p>
-            <p><strong>Factuality:</strong> ${outlet1.factuality}</p>
-            <p><strong>Trust Score:</strong> ${outlet1.trust_score}</p>
-            <p><strong>Description:</strong> ${outlet1.description}</p>
-        </div>
-        <div>
-            <h4>${outlet2.name}</h4>
-            <p><strong>Country:</strong> ${outlet2.country}</p>
-            <p><strong>Bias:</strong> ${outlet2.bias}</p>
-            <p><strong>Factuality:</strong> ${outlet2.factuality}</p>
-            <p><strong>Trust Score:</strong> ${outlet2.trust_score}</p>
-            <p><strong>Description:</strong> ${outlet2.description}</p>
-        </div>
-    `;
-
-    document.getElementById('comparisonContent').innerHTML = content;
+    // Show the modal
     document.getElementById('comparisonModal').style.display = 'flex';
+
+    // Update content container with chart canvas (already in HTML)
+    const factualityMap = {
+        "Low": 1,
+        "Mixed": 2,
+        "Mostly High": 3,
+        "High": 4,
+        "Very High": 5
+    };
+
+    const biasMap = {
+        "Far-Right": 5,
+        "Right": 4,
+        "Center-Right": 3,
+        "Center": 2,
+        "Center-Left": 1,
+        "Left": 0
+    };
+
+    const chartLabels = ["Trust Score", "Factuality Level", "Bias Position"];
+    const outlet1Data = [
+        outlet1.trust_score,
+        factualityMap[outlet1.factuality] || 0,
+        biasMap[outlet1.bias] ?? 2
+    ];
+    const outlet2Data = [
+        outlet2.trust_score,
+        factualityMap[outlet2.factuality] || 0,
+        biasMap[outlet2.bias] ?? 2
+    ];
+
+    // Destroy previous chart if any
+    if (window.compareChartInstance) {
+        window.compareChartInstance.destroy();
+    }
+
+    const ctx = document.getElementById('compareChart').getContext('2d');
+    window.compareChartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: chartLabels,
+            datasets: [
+                {
+                    label: outlet1.name,
+                    data: outlet1Data,
+                    backgroundColor: '#667eea'
+                },
+                {
+                    label: outlet2.name,
+                    data: outlet2Data,
+                    backgroundColor: '#ff6b6b'
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Score'
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    position: 'top'
+                },
+                tooltip: {
+                    callbacks: {
+                        title: (items) => chartLabels[items[0].dataIndex],
+                        label: (context) => `${context.dataset.label}: ${context.formattedValue}`
+                    }
+                }
+            }
+        }
+    });
 });
 
 function closeModal() {
