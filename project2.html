@@ -305,6 +305,7 @@
             <h1>Understanding Media Bias</h1>
         </header>
 
+        
         <div class="controls">
             <div class="filter-group">
                 <label for="outletFilter">News Outlet</label>
@@ -350,7 +351,36 @@
                 <input type="text" id="searchInput" placeholder="Search by name...">
             </div>
         </div>
+        <div class="controls" style="margin-top: -20px; margin-bottom: 40px;">
+    <div class="filter-group">
+        <label for="compareOutlet1">Compare Outlet 1</label>
+        <select id="compareOutlet1">
+            <option value="">Select first outlet</option>
+        </select>
+    </div>
+    <div class="filter-group">
+        <label for="compareOutlet2">Compare Outlet 2</label>
+        <select id="compareOutlet2">
+            <option value="">Select second outlet</option>
+        </select>
+    </div>
+    <div class="filter-group" style="align-self: end;">
+        <button id="compareBtn" style="padding: 12px; font-weight: bold; border-radius: 8px; border: none; background: #667eea; color: white; cursor: pointer; display: none;">
+            Compare
+        </button>
+    </div>
+</div>
 
+<!-- Modal Container -->
+<div id="comparisonModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(5px); justify-content: center; align-items: center; z-index:9999;">
+    <div style="background:white; padding:30px; border-radius:15px; width:90%; max-width:900px; position:relative; box-shadow: 0 8px 32px rgba(0,0,0,0.2);">
+        <button onclick="closeModal()" style="position:absolute; top:10px; right:15px; background:none; border:none; font-size:24px; cursor:pointer;">×</button>
+        <h3 style="text-align:center; margin-bottom:20px;">Outlet Comparison</h3>
+        <div id="comparisonContent" style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+            <!-- Filled dynamically -->
+        </div>
+    </div>
+</div>
         <div class="main-content">
             <div class="news-container">
                 <div id="newsGrid" class="news-grid"></div>
@@ -752,6 +782,67 @@
 
         // Initialize the application when the page loads
         init();
+        function populateCompareSelectors() {
+    const outletNames = newsData.map(n => n.name);
+    const select1 = document.getElementById('compareOutlet1');
+    const select2 = document.getElementById('compareOutlet2');
+
+    outletNames.forEach(name => {
+        const opt1 = document.createElement('option');
+        const opt2 = document.createElement('option');
+        opt1.value = opt2.value = name;
+        opt1.textContent = opt2.textContent = name;
+        select1.appendChild(opt1);
+        select2.appendChild(opt2);
+    });
+
+    select1.addEventListener('change', handleCompareSelect);
+    select2.addEventListener('change', handleCompareSelect);
+}
+
+function handleCompareSelect() {
+    const val1 = document.getElementById('compareOutlet1').value;
+    const val2 = document.getElementById('compareOutlet2').value;
+    const btn = document.getElementById('compareBtn');
+    btn.style.display = (val1 && val2 && val1 !== val2) ? 'block' : 'none';
+}
+
+document.getElementById('compareBtn').addEventListener('click', () => {
+    const val1 = document.getElementById('compareOutlet1').value;
+    const val2 = document.getElementById('compareOutlet2').value;
+
+    const outlet1 = newsData.find(o => o.name === val1);
+    const outlet2 = newsData.find(o => o.name === val2);
+
+    const content = `
+        <div>
+            <h4>${outlet1.name}</h4>
+            <p><strong>Country:</strong> ${outlet1.country}</p>
+            <p><strong>Bias:</strong> ${outlet1.bias}</p>
+            <p><strong>Factuality:</strong> ${outlet1.factuality}</p>
+            <p><strong>Trust Score:</strong> ${outlet1.trust_score}</p>
+            <p><strong>Description:</strong> ${outlet1.description}</p>
+        </div>
+        <div>
+            <h4>${outlet2.name}</h4>
+            <p><strong>Country:</strong> ${outlet2.country}</p>
+            <p><strong>Bias:</strong> ${outlet2.bias}</p>
+            <p><strong>Factuality:</strong> ${outlet2.factuality}</p>
+            <p><strong>Trust Score:</strong> ${outlet2.trust_score}</p>
+            <p><strong>Description:</strong> ${outlet2.description}</p>
+        </div>
+    `;
+
+    document.getElementById('comparisonContent').innerHTML = content;
+    document.getElementById('comparisonModal').style.display = 'flex';
+});
+
+function closeModal() {
+    document.getElementById('comparisonModal').style.display = 'none';
+}
+
+// Call on init
+populateCompareSelectors();
     </script>
 </body>
 </html>
